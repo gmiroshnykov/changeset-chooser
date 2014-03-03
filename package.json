@@ -1,0 +1,12 @@
+{
+  "name": "changeset-chooser",
+  "version": "0.0.0",
+  "private": true,
+  "bin": "bin/changeset-chooser",
+  "dependencies": {
+    "express": "3.4.8",
+    "lodash": "~2.4.1",
+    "async": "~0.2.10",
+    "request": "~2.34.0"
+  }
+}

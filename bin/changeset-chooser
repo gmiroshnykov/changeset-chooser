@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+var config = require('../config'),
+    appFactory = require('..');
+
+return appFactory(function(err, app) {
+  if (err) throw err;
+
+  return app.http.listen(config.PORT, config.HOST, function(err) {
+    if (err) throw err;
+
+    var address = app.http.address();
+    console.log('changeset-chooser listening on %s:%s', address.address, address.port);
+  });
+});
