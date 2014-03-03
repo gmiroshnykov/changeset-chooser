@@ -21,7 +21,8 @@ Setup
 
 1. Create (or clone) a Mercurial repository in the local filesystem.
 2. Add this repository to ReviewBoard.
-3. Change the values in `config.js`, then run `./bin/changeset-chooser`.
+3. Run `npm install`.
+4. Change the values in `config.js`, then run `./bin/changeset-chooser`.
 
 
 API
