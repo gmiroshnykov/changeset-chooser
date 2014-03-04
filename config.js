@@ -8,3 +8,6 @@ config.REVIEWBOARD_URL = 'http://rb.dev';
 config.REVIEWBOARD_USERNAME = 'admin';
 config.REVIEWBOARD_PASSWORD = 'admin';
 config.REVIEWBOARD_REPOSITORY = 1;
+
+// RB may fall over if you set this too high
+config.ASYNC_LIMIT = 5;
