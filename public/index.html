@@ -24,6 +24,8 @@
     <div class="container">
       <div id="errorbox" class="alert alert-danger hidden">Error: <span class="message" /></div>
 
+      <h4>Choose changesets to create review requests by clicking them:</h4>
+
       <table class="table table-hover" id="changesets">
         <thead>
           <tr>
@@ -57,12 +59,13 @@
         <td><%- user %></td>
         <td><%- date %></td>
         <td><%- summary %></td>
-        <td class="review-request">
-          <% if (reviewRequest) { %>
+        <% if (reviewRequest) { %>
+          <td class="review-request">
             <%= TEMPLATES.tdReviewRequest(reviewRequest) %>
-          <% } else { %>
-            &nbsp;
-          <% } %>
+          </td>
+        <% } else { %>
+          <td class="review-request text-muted">none</td>
+        <% } %>
         </td>
       </tr>
     </script>

@@ -23,6 +23,31 @@ Setup
 2. Add this repository to ReviewBoard.
 3. Run `npm install`.
 4. Change the values in `config.js`, then run `./bin/changeset-chooser`.
+5. Add the following `changegroup` hook to the `.hg/hgrc` file
+    in the central Mercurial repository:
+
+        [hooks]
+        changegroup = /usr/bin/env \
+            URL=http://localhost:5000/ \
+            /path/to/changeset-chooser/bin/hooks/changegroup
+
+    Replace `http://localhost:5000` with the public address of changeset-chooser.
+
+
+Usage
+-----
+
+Push some commits from your local repository to the central repository and
+you'll see a link to changeset chooser:
+
+    $ hg push
+    pushing to http://localhost:8000/
+    searching for changes
+    remote: adding changesets
+    remote: adding manifests
+    remote: adding file changes
+    remote: added 1 changesets with 1 changes to 1 files
+    remote: choose changesets to review: http://localhost:5000/?e31b9b299ef3f70848524df94908be3819501546
 
 
 API

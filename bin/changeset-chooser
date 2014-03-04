@@ -2,6 +2,16 @@
 var config = require('../config'),
     appFactory = require('..');
 
+if (!config.REPOSITORY) {
+  console.error('Error: REPOSITORY not set');
+  process.exit(1);
+}
+
+if (!config.REVIEWBOARD_URL) {
+  console.error('Error: REVIEWBOARD_URL not set');
+  process.exit(1);
+}
+
 return appFactory(function(err, app) {
   if (err) throw err;
 

@@ -92,6 +92,7 @@ function submit() {
       var tdReviewRequest = row.find('td.review-request');
       var html = TEMPLATES.tdReviewRequest(shortReviewRequest);
       tdReviewRequest.html(html);
+      tdReviewRequest.removeClass('text-muted');
     }
 
   }).fail(function(xhr, textStatus, errorThrown) {
