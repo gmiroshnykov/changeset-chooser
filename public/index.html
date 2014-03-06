@@ -24,6 +24,13 @@
     <div class="container">
       <div id="errorbox" class="alert alert-danger hidden">Error: <span class="message" /></div>
 
+      <form role="form">
+        <div class="form-group">
+          <label for="reviewer">Reviewer</label>
+          <input type="text" class="form-control" id="reviewer" placeholder="username">
+        </div>
+      </form>
+
       <h4>Choose changesets to create review requests by clicking them:</h4>
 
       <table class="table table-hover" id="changesets">
@@ -77,6 +84,7 @@
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
     <script src="//netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
     <script src="//cdnjs.cloudflare.com/ajax/libs/underscore.js/1.6.0/underscore-min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.1/typeahead.bundle.min.js"></script>
     <script src="/js/main.js"></script>
   </body>
 </html>

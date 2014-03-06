@@ -1,28 +1,16 @@
-var changesets = [
-  {
-    id: '92839660cc25',
-    author: 'George Miroshnykov <george.miroshnykov@gmail.com>',
-    date: 'Mon Mar 03 17:24:06 2014 +0200',
-    summary: 'Is this awesome?'
-  },
-  {
-    id: 'b3dcc5460e65',
-    author: 'George Miroshnykov <george.miroshnykov@gmail.com>',
-    date: 'Fri Feb 28 16:15:17 2014 +0200',
-    summary: 'Lots of line'
-  },
-  {
-    id: '896d46402a03',
-    author: 'George Miroshnykov <george.miroshnykov@gmail.com>',
-    date: 'Fri Feb 28 15:00:09 2014 +0200',
-    summary: 'Yeah!'
-  }
-];
-
 var TEMPLATES = {};
+
+var bhReviewers = new Bloodhound({
+  datumTokenizer: function(d) {
+    return Bloodhound.tokenizers.whitespace(d.username);
+  },
+  queryTokenizer: Bloodhound.tokenizers.whitespace,
+  remote: '/api/reviewers/?q=%QUERY'
+});
 
 $(function(){
   compileTemplates();
+  initTypeahead();
 
   var changeset = window.location.search.substr(1);
   if (!changeset) {
@@ -42,6 +30,16 @@ function compileTemplates() {
     var id = template.id;
     var code = template.innerHTML;
     TEMPLATES[id] = _.template(code);
+  });
+}
+
+function initTypeahead() {
+  bhReviewers.initialize();
+
+  $('#reviewer').typeahead(null, {
+    name: 'reviewers',
+    displayKey: 'username',
+    source: bhReviewers.ttAdapter()
   });
 }
 
@@ -75,8 +73,10 @@ function submit() {
   var revs = selectedRows.get().map(function(row) {
     return row.dataset.id;
   });
+  var reviewer = $('#reviewer').val();
   var request = {
-    revs: revs
+    revs: revs,
+    reviewer: reviewer
   };
 
   var btnSubmit = $('#btnSubmit');
