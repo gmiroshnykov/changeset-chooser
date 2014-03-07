@@ -1,3 +1,18 @@
 body {
   padding-top: 70px;
 }
+
+.tt-dropdown-menu {
+  border: 1px solid #555;
+  border-radius: 3px;
+  width: 100%;
+  background-color: white;
+}
+
+.tt-suggestion {
+  padding: 7px 5px 1px 5px;
+}
+
+.tt-suggestion.tt-cursor {
+  background-color: #DDD;
+}
