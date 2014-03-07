@@ -1,4 +1,8 @@
+var BUGZILLA_BUG_URL = 'http://bugzilla.mozilla.org/show_bug.cgi?id=';
+var BUGZILLA_API_URL = 'https://api-dev.bugzilla.mozilla.org/latest';
+
 var TEMPLATES = {};
+var PARAMS = {};
 
 var bhReviewers = new Bloodhound({
   datumTokenizer: function(d) {
@@ -12,12 +16,19 @@ $(function(){
   compileTemplates();
   initTypeahead();
 
-  var changeset = window.location.search.substr(1);
-  if (!changeset) {
+  var qs = window.location.search.substr(1);
+  PARAMS = parseQueryString(qs);
+
+  if (!PARAMS.changeset) {
     return renderError('no changeset provided in URI');
   }
 
-  loadChangesets(changeset);
+  if (!PARAMS.bug) {
+    return renderError('no bug provided in URI');
+  }
+
+  loadChangesets(PARAMS.changeset);
+  loadBugInfo(PARAMS.bug);
 
   // event handlers
   $('#btnSelectAll').click(selectAll);
@@ -53,6 +64,19 @@ function loadChangesets(changeset) {
   });
 }
 
+function loadBugInfo(bug) {
+  var url = BUGZILLA_API_URL + '/bug/' + bug;
+  $.get(url, function(res) {
+    var params = {
+      number: bug,
+      url: BUGZILLA_BUG_URL + bug,
+      summary: res.summary
+    };
+    var html = TEMPLATES.bugInfo(params);
+    $('#bug').html(html);
+  });
+}
+
 function renderChangesets(changesets) {
   var rows = changesets.map(TEMPLATES.changesetRow);
   $('#changesets tbody').html(rows.join(""));
@@ -76,7 +100,8 @@ function submit() {
   var reviewer = $('#reviewer').val();
   var request = {
     revs: revs,
-    reviewer: reviewer
+    reviewer: reviewer,
+    bug: PARAMS.bug
   };
 
   var btnSubmit = $('#btnSubmit');
@@ -135,4 +160,21 @@ function updateControls() {
   } else {
     submit.attr('disabled', 'disabled');
   }
+}
+
+function parseQueryString(qs) {
+  var result = {};
+  var parts = qs.split('&');
+  parts.forEach(function(part) {
+    var offset = part.indexOf('=');
+    if (offset === -1) {
+      result[part] = true;
+      return;
+    }
+
+    var k = part.substr(0, offset);
+    var v = part.substr(offset + 1);
+    result[k] = v;
+  });
+  return result;
 }

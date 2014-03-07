@@ -1,0 +1,24 @@
+#!/usr/bin/env node
+var querystring = require('querystring');
+
+var config = require('../../config');
+var changeset = process.env.HG_NODE;
+if (!changeset) {
+  console.error('ERROR: HG_NODE not set');
+  process.exit(1);
+}
+
+var bug = process.env.BUG;
+if (!bug) {
+  console.error('ERROR: BUG not set');
+  process.exit(1);
+}
+
+var params = {
+  changeset: changeset,
+  bug: bug
+};
+var qs = querystring.stringify(params);
+
+var url = config.URL + '?' + qs;
+console.log('choose changesets to review:', url);
