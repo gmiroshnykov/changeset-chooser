@@ -23,6 +23,7 @@
 
     <div class="container">
       <div id="errorbox" class="alert alert-danger hidden">Error: <span class="message" /></div>
+      <div id="messagebox" class="alert alert-success hidden"></div>
 
       <form role="form">
         <div class="form-group">
@@ -65,7 +66,7 @@
     </div>
 
     <script type="text/x-underscore" id="changesetRow">
-      <tr data-id="<%- id %>" class="<%- (reviewRequest ? 'info' : '') %>">
+      <tr data-node="<%- node %>" class="<%- (reviewRequest ? 'info' : '') %>">
         <td><%- id %></td>
         <td><%- user %></td>
         <td><%- date %></td>
@@ -87,6 +88,10 @@
 
     <script type="text/x-underscore" id="bugInfo">
       <a href="<%= url %>" target="_blank"><%- number %>: <%- summary %></a>
+    </script>
+
+    <script type="text/x-underscore" id="parentReviewRequestInfo">
+      <a href="<%= url %>" target="_blank">See parent review request</a>
     </script>
 
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>

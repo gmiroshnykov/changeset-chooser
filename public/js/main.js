@@ -88,6 +88,10 @@ function renderError(message) {
   $('#errorbox').removeClass('hidden');
 }
 
+function renderSuccess(message) {
+  $('#messagebox').removeClass('hidden').html(message);
+}
+
 function onRowClick(e) {
   selectRow(e.currentTarget);
 }
@@ -95,7 +99,7 @@ function onRowClick(e) {
 function submit() {
   var selectedRows = getSelectedRows();
   var revs = selectedRows.get().map(function(row) {
-    return row.dataset.id;
+    return row.dataset.node;
   });
   var reviewer = $('#reviewer').val();
   var request = {
@@ -108,9 +112,16 @@ function submit() {
   btnSubmit.button('loading');
 
   $.post('/api/create-review-request', request, function(results) {
-    for (var k in results) {
-      var shortReviewRequest = results[k];
-      var row = $('#changesets tbody tr[data-id="' + k + '"]');
+    var parent = results.parent;
+    var html = TEMPLATES.parentReviewRequestInfo(parent);
+    renderSuccess(html);
+
+    var children = results.children;
+    for (var k in children) {
+      var shortReviewRequest = children[k];
+      var node = shortReviewRequest.node;
+
+      var row = $('#changesets tbody tr[data-node="' + node + '"]');
       row.removeClass('success');
       row.addClass('info');
 
