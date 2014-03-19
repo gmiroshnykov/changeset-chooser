@@ -12,6 +12,16 @@ if (!config.REVIEWBOARD_URL) {
   process.exit(1);
 }
 
+if (!config.BUGZILLA_URL) {
+  console.error('Error: BUGZILLA_URL not set');
+  process.exit(1);
+}
+
+if (!config.BUGZILLA_API_URL) {
+  console.error('Error: BUGZILLA_API_URL not set');
+  process.exit(1);
+}
+
 return appFactory(function(err, app) {
   if (err) throw err;
 

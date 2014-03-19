@@ -10,6 +10,9 @@ config.REVIEWBOARD_USERNAME = 'admin';
 config.REVIEWBOARD_PASSWORD = 'admin';
 config.REVIEWBOARD_REPOSITORY = 1;
 
+config.BUGZILLA_URL = process.env.BUGZILLA_URL || 'https://bugzilla.mozilla.org';
+config.BUGZILLA_API_URL = process.env.BUGZILLA_API_URL || 'https://api-dev.bugzilla.mozilla.org/1.3';
+
 // RB may fall over if you set this too high
 var asyncLimit = process.env.ASYNC_LIMIT || '5';
 config.ASYNC_LIMIT = parseInt(asyncLimit, 10);

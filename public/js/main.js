@@ -27,7 +27,7 @@ $(function(){
     return renderError('no bug provided in URI');
   }
 
-  loadChangesets(PARAMS.changeset);
+  //loadChangesets(PARAMS.changeset);
   loadBugInfo(PARAMS.bug);
 
   // event handlers
@@ -65,15 +65,22 @@ function loadChangesets(changeset) {
 }
 
 function loadBugInfo(bug) {
-  var url = BUGZILLA_API_URL + '/bug/' + bug;
+  var url = '/api/bugs/' + bug;
   $.get(url, function(res) {
+    //console.log(res);
     var params = {
       number: bug,
-      url: BUGZILLA_BUG_URL + bug,
+      url: res.url,
       summary: res.summary
     };
     var html = TEMPLATES.bugInfo(params);
     $('#bug').html(html);
+
+    renderParentReviewRequest(res.reviewRequest);
+
+    if (res.reviewRequest && res.reviewRequest.changesets) {
+      renderChangesets(res.reviewRequest.changesets);
+    }
   });
 }
 
@@ -81,6 +88,15 @@ function renderChangesets(changesets) {
   var rows = changesets.map(TEMPLATES.changesetRow);
   $('#changesets tbody').html(rows.join(""));
   $('#changesets tbody tr').click(onRowClick);
+}
+
+function renderParentReviewRequest(parentReviewRequest) {
+  if (parentReviewRequest) {
+    var html = TEMPLATES.parentReviewRequestInfo(parentReviewRequest);
+    $('#parentReviewRequest').html(html);
+  } else {
+    $('#parentReviewRequest').html('not created yet');
+  }
 }
 
 function renderError(message) {
@@ -113,8 +129,7 @@ function submit() {
 
   $.post('/api/create-review-request', request, function(results) {
     var parent = results.parent;
-    var html = TEMPLATES.parentReviewRequestInfo(parent);
-    renderSuccess(html);
+    renderParentReviewRequest(parent);
 
     var children = results.children;
     for (var k in children) {
