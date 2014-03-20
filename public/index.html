@@ -40,26 +40,40 @@
         </div>
       </form>
 
-      <h4>Choose changesets to create review requests by clicking them:</h4>
+      <div id="old-changesets" class="hidden">
+        <h4>Existing changesets:</h4>
 
-      <table class="table table-hover" id="changesets">
-        <thead>
-          <tr>
-            <th class="col-md-2">Changeset</th>
-            <th class="col-md-2">Author</th>
-            <th class="col-md-3">Date</th>
-            <th class="col-md-4">Summary</th>
-            <th class="col-md-1">Review Request</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td colspan="5">Loading...</td>
-          </tr>
-        </tbody>
-      </table>
+        <table id="old-changesets-table" class="table table-striped">
+          <thead>
+            <tr>
+              <th class="col-md-2">Changeset</th>
+              <th class="col-md-2">Author</th>
+              <th class="col-md-3">Date</th>
+              <th class="col-md-4">Summary</th>
+              <th class="col-md-1">Review request</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
 
-      <p>
+      <div id="new-changesets" class="hidden">
+        <h4>New changesets:</h4>
+
+        <table class="table table-hover table-striped" id="new-changesets-table">
+          <thead>
+            <tr>
+              <th class="col-md-2">Changeset</th>
+              <th class="col-md-2">Author</th>
+              <th class="col-md-3">Date</th>
+              <th class="col-md-5">Summary</th>
+            </tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+
+      <p id="controls">
         <button id="btnSelectAll" type="button" class="btn btn-link">Select all</button>
         <button id="btnSelectNone" type="button" class="btn btn-link">Select none</button>
 
@@ -69,25 +83,26 @@
       </p>
     </div>
 
-    <script type="text/x-underscore" id="changesetRow">
-      <tr data-node="<%- node %>" class="<%- (reviewRequest ? 'info' : '') %>">
+    <script type="text/x-underscore" id="oldChangesetRow">
+      <tr data-node="<%- node %>">
         <td><%- id %></td>
         <td><%- user %></td>
         <td><%- date %></td>
         <td><%- summary %></td>
-        <% if (reviewRequest) { %>
-          <td class="review-request">
-            <%= TEMPLATES.tdReviewRequest(reviewRequest) %>
-          </td>
-        <% } else { %>
-          <td class="review-request text-muted">none</td>
-        <% } %>
+        <td>
+          <a href="<%= reviewRequest.url %>" target="_blank"><%- reviewRequest.id %></a>
+          <button data-id="<%- reviewRequest.id %>" class="delete btn btn-link" title="Remove from review">[X]</button>
         </td>
       </tr>
     </script>
 
-    <script type="text/x-underscore" id="tdReviewRequest">
-      <a href="<%= url %>" target="_blank"><%= id %></a>
+    <script type="text/x-underscore" id="newChangesetRow">
+      <tr data-node="<%- node %>">
+        <td><%- id %></td>
+        <td><%- user %></td>
+        <td><%- date %></td>
+        <td><%- summary %></td>
+      </tr>
     </script>
 
     <script type="text/x-underscore" id="bugInfo">

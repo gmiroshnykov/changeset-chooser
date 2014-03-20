@@ -27,8 +27,7 @@ $(function(){
     return renderError('no bug provided in URI');
   }
 
-  //loadChangesets(PARAMS.changeset);
-  loadBugInfo(PARAMS.bug);
+  initMain();
 
   // event handlers
   $('#btnSelectAll').click(selectAll);
@@ -54,48 +53,88 @@ function initTypeahead() {
   });
 }
 
+function initMain() {
+  var promiseBugInfo = loadBugInfo(PARAMS.bug);
+  var promiseChangesets = loadChangesets(PARAMS.changeset);
+  $.when(promiseBugInfo, promiseChangesets)
+    .fail(function(xhr, textStatus, errorThrown) {
+      renderError('request failed, please see logs');
+    })
+    .done(function(bugInfo, newChangesets) {
+      renderBugInfo(bugInfo);
+      renderParentReviewRequest(bugInfo.reviewRequest);
+
+      var oldChangesets = [];
+      if (bugInfo.reviewRequest && bugInfo.reviewRequest.changesets) {
+        oldChangesets = bugInfo.reviewRequest.changesets;
+      }
+
+      var actuallyNewChangesets = filterChangesets(oldChangesets, newChangesets);
+
+      renderOldChangesets(oldChangesets);
+      renderNewChangesets(actuallyNewChangesets);
+    });
+}
+
+// returns the difference between old and new changesets
+function filterChangesets(oldChangesets, newChangesets) {
+  var lookup = {};
+  oldChangesets.forEach(function(changeset) {
+    lookup[changeset.id] = true;
+  });
+
+  var result = newChangesets.filter(function(changeset) {
+    return !lookup[changeset.id];
+  });
+  return result;
+}
+
 function loadChangesets(changeset) {
   var url = '/api/changesets/' + changeset;
-  $.get(url, function(changesets) {
-    //console.log(changesets);
-    renderChangesets(changesets);
-  }).fail(function(xhr, textStatus, errorThrown) {
-    renderError('failed to load changesets');
+  return $.get(url).then(function(changesets) {
+    return changesets;
   });
 }
 
 function loadBugInfo(bug) {
   var url = '/api/bugs/' + bug;
-  $.get(url, function(res) {
-    //console.log(res);
-    var params = {
-      number: bug,
-      url: res.url,
-      summary: res.summary
-    };
-    var html = TEMPLATES.bugInfo(params);
-    $('#bug').html(html);
-
-    renderParentReviewRequest(res.reviewRequest);
-
-    if (res.reviewRequest && res.reviewRequest.changesets) {
-      renderChangesets(res.reviewRequest.changesets);
-    }
+  return $.get(url).then(function(bugInfo) {
+    bugInfo.number = bug;
+    return bugInfo;
   });
 }
 
-function renderChangesets(changesets) {
-  var rows = changesets.map(TEMPLATES.changesetRow);
-  $('#changesets tbody').html(rows.join(""));
-  $('#changesets tbody tr').click(onRowClick);
+function renderBugInfo(bugInfo) {
+  var html = TEMPLATES.bugInfo(bugInfo);
+  $('#bug').html(html);
+}
+
+function renderOldChangesets(changesets) {
+  var rows = changesets.map(TEMPLATES.oldChangesetRow);
+  $('#old-changesets-table tbody').html(rows.join(""));
+  $('#old-changesets-table button.delete').click(removeFromReview);
+  $('#old-changesets').removeClass('hidden');
+}
+
+function renderNewChangesets(changesets) {
+  var rows = changesets.map(TEMPLATES.newChangesetRow);
+  $('#new-changesets-table tbody').html(rows.join(""));
+  $('#new-changesets-table tbody tr').click(onRowClick);
+  $('#new-changesets').removeClass('hidden');
+  updateControls();
 }
 
 function renderParentReviewRequest(parentReviewRequest) {
   if (parentReviewRequest) {
     var html = TEMPLATES.parentReviewRequestInfo(parentReviewRequest);
     $('#parentReviewRequest').html(html);
+
+    if (parentReviewRequest.reviewer) {
+      $('#reviewer').val(parentReviewRequest.reviewer);
+    }
   } else {
     $('#parentReviewRequest').html('not created yet');
+    $('#reviewer').val('');
   }
 }
 
@@ -128,29 +167,27 @@ function submit() {
   btnSubmit.button('loading');
 
   $.post('/api/create-review-request', request, function(results) {
-    var parent = results.parent;
-    renderParentReviewRequest(parent);
-
-    var children = results.children;
-    for (var k in children) {
-      var shortReviewRequest = children[k];
-      var node = shortReviewRequest.node;
-
-      var row = $('#changesets tbody tr[data-node="' + node + '"]');
-      row.removeClass('success');
-      row.addClass('info');
-
-      var tdReviewRequest = row.find('td.review-request');
-      var html = TEMPLATES.tdReviewRequest(shortReviewRequest);
-      tdReviewRequest.html(html);
-      tdReviewRequest.removeClass('text-muted');
-    }
-
+    initMain();
   }).fail(function(xhr, textStatus, errorThrown) {
     renderError('failed to create review requests');
   }).always(function() {
     btnSubmit.button('reset');
   });
+}
+
+function removeFromReview(e) {
+  var id = e.currentTarget.dataset.id;
+  var url = '/api/review-requests/' + id;
+  $.ajax({
+    url: url,
+    type: 'DELETE',
+    success: function() {
+      initMain();
+    },
+    error: function() {
+      renderError('failed to delete review request');
+    }
+  })
 }
 
 
@@ -165,17 +202,17 @@ function selectRow(row) {
 }
 
 function selectAll() {
-  $('#changesets tbody tr').not('.info').addClass('success');
+  $('#new-changesets tbody tr').not('.info').addClass('success');
   updateControls();
 }
 
 function selectNone() {
-  $('#changesets tbody tr').not('.info').removeClass('success');
+  $('#new-changesets tbody tr').not('.info').removeClass('success');
   updateControls();
 }
 
 function getSelectedRows() {
-  return $('#changesets tbody tr.success');
+  return $('#new-changesets tbody tr.success');
 }
 
 function updateControls() {
