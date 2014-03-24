@@ -166,7 +166,7 @@ function submit() {
   var btnSubmit = $('#btnSubmit');
   btnSubmit.button('loading');
 
-  $.post('/api/create-review-request', request, function(results) {
+  $.post('/api/review-requests/', request, function(results) {
     initMain();
   }).fail(function(xhr, textStatus, errorThrown) {
     renderError('failed to create review requests');
