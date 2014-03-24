@@ -15,6 +15,7 @@ var bhReviewers = new Bloodhound({
 $(function(){
   compileTemplates();
   initTypeahead();
+  new Spinner().spin(document.getElementById('loading'));
 
   var qs = window.location.search.substr(1);
   PARAMS = parseQueryString(qs);
@@ -54,6 +55,8 @@ function initTypeahead() {
 }
 
 function initMain() {
+  $('#loading').removeClass('hidden');
+
   var promiseBugInfo = loadBugInfo(PARAMS.bug);
   var promiseChangesets = loadChangesets(PARAMS.changeset);
   $.when(promiseBugInfo, promiseChangesets)
@@ -73,6 +76,9 @@ function initMain() {
 
       renderOldChangesets(oldChangesets);
       renderNewChangesets(actuallyNewChangesets);
+    })
+    .always(function() {
+      $('#loading').addClass('hidden');
     });
 }
 
