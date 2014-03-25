@@ -182,18 +182,22 @@ function submit() {
 }
 
 function removeFromReview(e) {
+  $('#loading').removeClass('hidden');
+
   var id = e.currentTarget.dataset.id;
-  var url = '/api/review-requests/' + id;
+  var url = '/api/review-requests/' + id + '/discard';
   $.ajax({
     url: url,
-    type: 'DELETE',
+    type: 'POST',
     success: function() {
+      $('#loading').addClass('hidden');
       initMain();
     },
     error: function() {
-      renderError('failed to delete review request');
+      $('#loading').addClass('hidden');
+      renderError('failed to discard review request');
     }
-  })
+  });
 }
 
 
