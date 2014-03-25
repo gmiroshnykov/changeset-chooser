@@ -76,4 +76,4 @@ In case you'll try to do a regular `hg push`, it will fail like this:
 API
 ---
 
-TODO, see `lib/routes.js`.
+See `lib/routes/`.
