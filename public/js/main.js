@@ -193,6 +193,10 @@ function submit() {
 }
 
 function removeFromReview(e) {
+  if (!confirm('Are you sure you wish to discard this review request?')) {
+    return;
+  }
+
   $('#loading').removeClass('hidden');
 
   var id = e.currentTarget.dataset.id;
