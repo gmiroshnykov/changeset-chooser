@@ -86,11 +86,21 @@ function initMain() {
 function filterChangesets(oldChangesets, newChangesets) {
   var lookup = {};
   oldChangesets.forEach(function(changeset) {
-    lookup[changeset.id] = true;
+    if (!changeset.reviewRequest) {
+      return;
+    }
+
+    var reviewRequestId = changeset.reviewRequest.id;
+    lookup[reviewRequestId] = true;
   });
 
   var result = newChangesets.filter(function(changeset) {
-    return !lookup[changeset.id];
+    if (!changeset.reviewRequest) {
+      return true;
+    }
+
+    var reviewRequestId = changeset.reviewRequest.id;
+    return !lookup[reviewRequestId];
   });
   return result;
 }
@@ -126,6 +136,7 @@ function renderNewChangesets(changesets) {
   var rows = changesets.map(TEMPLATES.newChangesetRow);
   $('#new-changesets-table tbody').html(rows.join(""));
   $('#new-changesets-table tbody tr').click(onRowClick);
+  $('#new-changesets-table button.delete').click(removeFromReview);
   $('#new-changesets').removeClass('hidden');
   updateControls();
 }
@@ -203,7 +214,7 @@ function removeFromReview(e) {
 
 function selectRow(row) {
   row = $(row);
-  if (row.hasClass('info')) {
+  if (row.hasClass('warning')) {
     return;
   }
 
@@ -212,12 +223,12 @@ function selectRow(row) {
 }
 
 function selectAll() {
-  $('#new-changesets tbody tr').not('.info').addClass('success');
+  $('#new-changesets tbody tr').not('.warning').addClass('success');
   updateControls();
 }
 
 function selectNone() {
-  $('#new-changesets tbody tr').not('.info').removeClass('success');
+  $('#new-changesets tbody tr').not('.warning').removeClass('success');
   updateControls();
 }
 

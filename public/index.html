@@ -68,7 +68,8 @@
               <th class="col-md-2">Changeset</th>
               <th class="col-md-2">Author</th>
               <th class="col-md-3">Date</th>
-              <th class="col-md-5">Summary</th>
+              <th class="col-md-4">Summary</th>
+              <th class="col-md-1">Review request</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -99,11 +100,19 @@
     </script>
 
     <script type="text/x-underscore" id="newChangesetRow">
-      <tr data-node="<%- node %>">
+      <tr data-node="<%- node %>" class="<%= reviewRequest ? 'warning' : '' %>">
         <td><%- id %></td>
         <td><%- user %></td>
         <td><%- date %></td>
         <td><%- summary %></td>
+        <td>
+        <% if (reviewRequest) { %>
+          <a href="<%= reviewRequest.url %>" target="_blank"><%- reviewRequest.id %></a>
+          <button data-id="<%- reviewRequest.id %>" class="delete btn btn-link" title="Remove from review">[X]</button>
+        <% } else { %>
+          &nbsp;
+        <% } %>
+        </td>
       </tr>
     </script>
 
