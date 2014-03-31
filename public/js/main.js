@@ -129,6 +129,7 @@ function renderOldChangesets(changesets) {
   var rows = changesets.map(TEMPLATES.oldChangesetRow);
   $('#old-changesets-table tbody').html(rows.join(""));
   $('#old-changesets-table button.delete').click(removeFromReview);
+  $('#old-changesets-table button.replace').click(replaceChangeset);
   $('#old-changesets').removeClass('hidden');
 }
 
@@ -215,6 +216,34 @@ function removeFromReview(e) {
   });
 }
 
+function replaceChangeset(e) {
+  if (!confirm('Are you sure you wish to replace this changeset with the selected one?')) {
+    return;
+  }
+
+  var id = e.currentTarget.dataset.id;
+  var url = '/api/review-requests/' + id + '/rewrite';
+
+  var rev = getSelectedRows().get(0).dataset.node;
+  var request = {
+    rev: rev
+  };
+
+  $.ajax({
+    url: url,
+    type: 'POST',
+    data: request,
+    success: function() {
+      $('#loading').addClass('hidden');
+      initMain();
+    },
+    error: function() {
+      $('#loading').addClass('hidden');
+      renderError('failed to rewrite review request');
+    }
+  });
+}
+
 
 function selectRow(row) {
   row = $(row);
@@ -247,6 +276,12 @@ function updateControls() {
     submit.removeAttr('disabled');
   } else {
     submit.attr('disabled', 'disabled');
+  }
+
+  if (selectedRows.length === 1) {
+    $('#old-changesets button.replace').removeClass('hidden');
+  } else {
+    $('#old-changesets button.replace').addClass('hidden');
   }
 }
 

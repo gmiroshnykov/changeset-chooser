@@ -49,10 +49,10 @@
           <thead>
             <tr>
               <th class="col-md-2">Changeset</th>
-              <th class="col-md-2">Author</th>
+              <th class="col-md-1">Author</th>
               <th class="col-md-3">Date</th>
               <th class="col-md-4">Summary</th>
-              <th class="col-md-1">Review request</th>
+              <th class="col-md-2">Review request</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -66,10 +66,10 @@
           <thead>
             <tr>
               <th class="col-md-2">Changeset</th>
-              <th class="col-md-2">Author</th>
+              <th class="col-md-1">Author</th>
               <th class="col-md-3">Date</th>
               <th class="col-md-4">Summary</th>
-              <th class="col-md-1">Review request</th>
+              <th class="col-md-2">Review request</th>
             </tr>
           </thead>
           <tbody></tbody>
@@ -95,6 +95,7 @@
         <td>
           <a href="<%= reviewRequest.url %>" target="_blank"><%- reviewRequest.id %></a>
           <button data-id="<%- reviewRequest.id %>" class="delete btn btn-link" title="Remove from review">[X]</button>
+          <button data-id="<%- reviewRequest.id %>" class="replace btn btn-link hidden" title="Replace">[R]</button>
         </td>
       </tr>
     </script>
