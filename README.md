@@ -76,7 +76,7 @@ In case you'll try to do a regular `hg push`, it will fail like this:
 API
 ---
 
-### GET /api/bugs/:bugId
+### `GET /api/bugs/:bugId`
 
 Get Bugzilla bug info
 
@@ -101,7 +101,7 @@ Response:
 }
 ```
 
-### GET /api/reviewers/?q=<name>
+### `GET /api/reviewers/?q=<name>`
 
 Find reviewers by name (reviewer suggestion).
 
@@ -122,7 +122,7 @@ Response:
 ]
 ```
 
-### GET /api/changesets/:rev
+### `GET /api/changesets/:rev`
 
 Get the list of changesets descending from the given revision.
 
@@ -179,7 +179,7 @@ Response:
 ]
 ```
 
-### POST /api/review-requests/
+### `POST /api/review-requests/`
 
 Create or update review request.
 
@@ -238,7 +238,7 @@ Response:
 }
 ```
 
-#### POST /api/review-requests/:id/discard
+### `POST /api/review-requests/:id/discard`
 
 Discard a child review request.
 
@@ -250,7 +250,7 @@ Response:
 
     200 OK (empty)
 
-#### POST /api/review-requests/:id/rewrite
+### `POST /api/review-requests/:id/rewrite`
 
 Rewrite history by changing the changeset of existing review request.
 
