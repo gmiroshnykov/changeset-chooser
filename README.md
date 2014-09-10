@@ -1,3 +1,6 @@
+Warning: this repository is obsolete!
+-------------------------------------
+
 changeset-chooser
 =================
 
